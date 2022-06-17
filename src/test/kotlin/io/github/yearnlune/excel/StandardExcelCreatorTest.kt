@@ -5,8 +5,7 @@ import org.hamcrest.Matchers
 import org.hamcrest.core.Is.`is`
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import java.time.LocalDateTime
-import java.time.ZoneOffset
+import java.util.*
 
 class StandardExcelCreatorTest {
 
@@ -22,7 +21,7 @@ class StandardExcelCreatorTest {
                 ExcelMeta.Header("나이"),
                 ExcelMeta.Header("가입일")
             ),
-            contents = arrayOf(ExcelMeta.Content(arrayOf("Identification", 22, LocalDateTime.now())))
+            contents = arrayOf(ExcelMeta.Content(arrayOf("Identification", 22, Date())))
         )
 
         /* WHEN */
@@ -40,9 +39,7 @@ class StandardExcelCreatorTest {
             `is`(Matchers.closeTo((request.contents[0].values[1] as Int).toDouble(), 0.001))
         )
         assertThat(
-            sheet.getRow(1).getCell(2).dateCellValue.time,
-            `is`((request.contents[0].values[2] as LocalDateTime).toInstant(ZoneOffset.ofHours(9)).toEpochMilli())
+            sheet.getRow(1).getCell(2).dateCellValue.time, `is`((request.contents[0].values[2] as Date).time)
         )
-
     }
 }
