@@ -12,4 +12,4 @@ jobs:
           java-version: 11
           distribution: corretto
       - name: Grant permission And Run
-        run: chmod +x ./gradlew && ./gradlew
+        run: chmod +x ./gradlew && ./gradlew build test
