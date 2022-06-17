@@ -10,5 +10,6 @@ jobs:
         uses: actions/setup-java@v3.3.0
         with:
           java-version: 11
+          distribution: corretto
       - name: Grant permission And Run
         run: chmod +x ./gradlew && ./gradlew
