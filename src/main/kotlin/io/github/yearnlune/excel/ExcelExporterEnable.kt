@@ -7,5 +7,5 @@ import org.springframework.context.annotation.Import
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
 @Configuration
-@Import(ExcelExporterConfiguration::class)
+@Import(ExcelExporterServiceConfiguration::class)
 annotation class ExcelExporterEnable

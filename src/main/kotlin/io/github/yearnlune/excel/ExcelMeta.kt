@@ -2,12 +2,8 @@ package io.github.yearnlune.excel
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import java.text.DateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class ExcelMeta(
-
-    val title: String = "${LocalDateTime.now().format(DateTimeFormatter.ISO_DATE)}_data",
 
     val headers: Array<Header> = arrayOf(),
 

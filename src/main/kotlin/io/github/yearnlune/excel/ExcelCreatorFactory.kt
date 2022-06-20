@@ -11,6 +11,7 @@ class ExcelCreatorFactory {
             excelCreatorAnnotation.name.ifBlank { creatorClass.simpleName }
         }
 
-    fun getCreator(name: String): ExcelCreatable? = this.factory[name]
+    @kotlin.jvm.Throws(RuntimeException::class)
+    fun getCreator(name: String): ExcelCreatable = this.factory[name] ?: throw NotFoundCreatorException("COULD NOT FOUND [$name] Excel Creator")
 }
 

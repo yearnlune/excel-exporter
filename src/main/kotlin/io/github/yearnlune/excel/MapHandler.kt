@@ -1,6 +1,6 @@
 package io.github.yearnlune.excel
 
-import java.util.AbstractMap
+import java.util.*
 
 fun Map<*, *>.flatten(): Map<*, *> {
     return this.entries

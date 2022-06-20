@@ -28,6 +28,8 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.hamcrest:hamcrest:2.2")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+    testImplementation("io.findify:s3mock_2.13:0.2.6")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:2.7.0")
 }
 
 tasks {

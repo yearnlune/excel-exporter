@@ -4,6 +4,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.Is.`is`
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class ExcelCreatorFactoryTest {
 
@@ -19,7 +20,7 @@ class ExcelCreatorFactoryTest {
         val excelCreator = excelCreatorFactory.getCreator(creatorName)
 
         /* THEN */
-        assertThat(excelCreator?.javaClass?.simpleName, `is`(StandardExcelCreator::class.simpleName))
+        assertThat(excelCreator.javaClass.simpleName, `is`(StandardExcelCreator::class.simpleName))
     }
 
     @Test
@@ -32,6 +33,22 @@ class ExcelCreatorFactoryTest {
         val excelCreator = excelCreatorFactory.getCreator(creatorName)
 
         /* THEN */
-        assertThat(excelCreator?.javaClass?.simpleName, `is`(creatorName))
+        assertThat(excelCreator.javaClass.simpleName, `is`(creatorName))
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 creator 가져오기")
+    fun getCreator_withNotExistCreator() {
+        /* GIVEN */
+        val creatorName = "UnknownExcelCreator"
+
+        /* THEN */
+        val exception = assertThrows<NotFoundCreatorException> {
+            /* WHEN */
+            excelCreatorFactory.getCreator(creatorName)
+        }
+
+        /* THEN */
+        assertThat(exception.message, `is`("COULD NOT FOUND [$creatorName] Excel Creator"))
     }
 }

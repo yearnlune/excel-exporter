@@ -1,0 +1,9 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+test:
+  s3:
+    host: "localhost"
+    port: 8081
+    bucket: "test.bucket"
