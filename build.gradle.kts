@@ -51,16 +51,14 @@ tasks {
 
         finalizedBy(jacocoTestReport)
     }
-    java {
-        withSourcesJar()
-        dokkaJavadocJar
-    }
 }
 
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
+            artifact(tasks["sourcesJar"])
+            artifact(tasks["dokkaJavadocJar"])
 
             pom {
                 name.set(rootProject.name)
