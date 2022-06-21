@@ -11,7 +11,7 @@ jobs:
         with:
           java-version: 11
           distribution: corretto
-      - name: Grant permission And Build
+      - name: Grant permission and build
         run: chmod +x ./gradlew && ./gradlew build test
       - name: Publish
         env:
