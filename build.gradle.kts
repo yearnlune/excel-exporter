@@ -11,7 +11,7 @@ plugins {
 
 allprojects {
     group = "io.github.yearnlune.excel"
-    version = "1.0.0"
+    version = "1.0.1"
 
     repositories {
         mavenCentral()
@@ -62,14 +62,12 @@ publishing {
         create<MavenPublication>("mavenJava") {
             artifact(tasks["sourcesJar"])
             artifact(tasks["dokkaJavadocJar"])
+            from(components["java"])
+
             pom {
                 name.set(rootProject.name)
-                description.set("A concise description of my library")
+                description.set("Export to excel")
                 url.set("https://github.com/yearnlune/excel-exporter")
-                properties.set(mapOf(
-                    "myProp" to "value",
-                    "prop.with.dots" to "anotherValue"
-                ))
                 licenses {
                     license {
                         name.set("MIT License")
@@ -100,8 +98,6 @@ publishing {
             configure<SigningExtension> {
                 val signingKey: String? by project
                 val signingPassword: String? by project
-                println("SECRET:\n $signingKey")
-                println("signingPassword:\n $signingPassword")
                 useInMemoryPgpKeys(signingKey, signingPassword)
                 sign(publications["mavenJava"])
             }
