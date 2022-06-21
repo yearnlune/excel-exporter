@@ -60,8 +60,6 @@ tasks {
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
-            artifact(tasks["sourcesJar"])
-            artifact(tasks["dokkaJavadocJar"])
             from(components["java"])
 
             pom {
