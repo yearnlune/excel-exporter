@@ -11,7 +11,7 @@ plugins {
 
 allprojects {
     group = "io.github.yearnlune.excel"
-    version = "1.0.1-rc1"
+    version = "1.0.1-rc2"
 
     repositories {
         mavenCentral()
@@ -24,7 +24,7 @@ allprojects {
 }
 
 dependencies {
-    implementation("org.apache.poi:poi-ooxml:5.2.2")
+    api("org.apache.poi:poi-ooxml:5.2.2")
     implementation("io.github.classgraph:classgraph:4.8.147")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3")
