@@ -29,17 +29,22 @@ class ExcelExporter(
         return workbook
     }
 
+    fun exportAsByteString(data: ExcelMeta, creatorName: String = DEFAULT_CREATOR_NAME): String? {
+        return this.exportAsWorkbook(data, creatorName)?.let { toByteString(it) }
+    }
+
     fun exportAsResponseEntity(
         data: ExcelMeta,
         fileName: String? = "excel_exporter_data",
         creatorName: String = DEFAULT_CREATOR_NAME
     ): ResponseEntity<ByteArray> {
-        return this.exportAsWorkbook(data, creatorName)?.let {
-            ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=$fileName.xlsx")
-                .body(toOutputStream(it).toByteArray())
-        } ?: ResponseEntity.badRequest().build()
+        return this.exportAsWorkbook(data, creatorName)
+            ?.let {
+                ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=$fileName.xlsx")
+                    .body(toOutputStream(it).toByteArray())
+            } ?: ResponseEntity.badRequest().build()
     }
 
     fun exportAsDownloadUrl(data: ExcelMeta, fileName: String = UUID.randomUUID().toString(), creatorName: String = DEFAULT_CREATOR_NAME): String? {
@@ -54,5 +59,11 @@ class ExcelExporter(
         workbook.write(outputStream)
 
         return outputStream
+    }
+
+    private fun toByteString(workbook: Workbook): String {
+        val outputStream = toOutputStream(workbook)
+
+        return Base64.getEncoder().encodeToString(outputStream.toByteArray())
     }
 }

@@ -35,11 +35,21 @@ class StandardExcelCreator : ExcelCreatable {
     }
 
     private fun createContents(sheet: SXSSFSheet, rowIndex: AtomicInteger, contents: Array<ExcelMeta.Content>) {
+        var isNotNullValue = false
         repeat(contents.count()) { rowCount ->
-            val contentRow = sheet.createRow(rowIndex.getAndIncrement())
+            val contentRow = sheet.createRow(rowIndex.get())
             repeat(contents[rowCount].values.count()) {
                 val contentCell = contentRow.createCell(it)
-                contentCell.setCellValue(contents[rowCount].values[it])
+                contents[rowCount].values[it]
+                    ?.let { value ->
+                        contentCell.setCellValue(value)
+                        isNotNullValue = true
+                    }
+            }
+
+            if (isNotNullValue) {
+                rowIndex.incrementAndGet()
+                isNotNullValue = false
             }
         }
     }

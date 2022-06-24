@@ -29,13 +29,14 @@ class ExcelMeta(
                     .toTypedArray()
                 val contents = flattenMaps
                     .map {
-                        Content(
-                            headers
-                                .map { header ->
-                                    it[header.name]
-                                }.toTypedArray()
-                        )
-                    }.toTypedArray()
+                        headers
+                            .filter { header -> it[header.name] != null }
+                            .map { header -> it[header.name] }
+                            .toTypedArray()
+                            .let { Content(it) }
+                    }
+                    .filter { it.values.isNotEmpty() }
+                    .toTypedArray()
 
                 return ExcelMeta(
                     headers = headers,
