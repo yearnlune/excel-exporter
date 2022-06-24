@@ -17,20 +17,14 @@ class ExcelExporter(
 
     private val excelCreatorFactory: ExcelCreatorFactory = ExcelCreatorFactory()
 
-    fun exportAsWorkbook(data: ExcelMeta, creatorName: String = DEFAULT_CREATOR_NAME): Workbook? {
-        var workbook: Workbook? = null
 
-        try {
-            workbook = this.excelCreatorFactory.getCreator(creatorName).createExcel(data)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        return workbook
+    @kotlin.jvm.Throws(NotFoundCreatorException::class)
+    fun exportAsWorkbook(data: ExcelMeta, creatorName: String = DEFAULT_CREATOR_NAME): Workbook {
+        return this.excelCreatorFactory.getCreator(creatorName).createExcel(data)
     }
-
-    fun exportAsByteString(data: ExcelMeta, creatorName: String = DEFAULT_CREATOR_NAME): String? {
-        return this.exportAsWorkbook(data, creatorName)?.let { toByteString(it) }
+    @kotlin.jvm.Throws(NotFoundCreatorException::class)
+    fun exportAsByteString(data: ExcelMeta, creatorName: String = DEFAULT_CREATOR_NAME): String {
+        return toByteString(this.exportAsWorkbook(data, creatorName))
     }
 
     fun exportAsResponseEntity(
@@ -38,19 +32,24 @@ class ExcelExporter(
         fileName: String? = "excel_exporter_data",
         creatorName: String = DEFAULT_CREATOR_NAME
     ): ResponseEntity<ByteArray> {
-        return this.exportAsWorkbook(data, creatorName)
-            ?.let {
-                ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=$fileName.xlsx")
-                    .body(toOutputStream(it).toByteArray())
-            } ?: ResponseEntity.badRequest().build()
+        return try {
+            this.exportAsWorkbook(data, creatorName)
+                .let {
+                    ResponseEntity.ok()
+                        .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=$fileName.xlsx")
+                        .body(toOutputStream(it).toByteArray())
+                }
+        } catch (_: Exception) {
+            ResponseEntity.badRequest().build()
+        }
     }
 
+    @kotlin.jvm.Throws(NotFoundCreatorException::class)
     fun exportAsDownloadUrl(data: ExcelMeta, fileName: String = UUID.randomUUID().toString(), creatorName: String = DEFAULT_CREATOR_NAME): String? {
         return excelExporterConfigurer?.getS3Support()?.uploadAndGetDownloadUrl(
             fileName,
-            this.exportAsWorkbook(data, creatorName)!!
+            this.exportAsWorkbook(data, creatorName)
         )
     }
 
