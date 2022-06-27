@@ -11,7 +11,7 @@ plugins {
 
 allprojects {
     group = "io.github.yearnlune.excel"
-    version = "1.0.2-rc1"
+    version = "1.0.2"
 
     repositories {
         mavenCentral()
