@@ -31,6 +31,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-autoconfigure:2.7.0")
     implementation("org.springframework:spring-web:5.3.20")
     implementation("com.amazonaws:aws-java-sdk-s3:1.12.241")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.hamcrest:hamcrest:2.2")

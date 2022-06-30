@@ -1,6 +1,10 @@
 package io.github.yearnlune.excel
 
-class ExcelCreatorFactory {
+/**
+ * Factory class that declared 'Excel creator' with [ExcelCreator]
+ *
+ */
+object ExcelCreatorFactory {
 
     private val factory: Map<String, ExcelCreatable> = ExcelCreator::class.getDeclaredClassList()
         .map { it.loadClass().getDeclaredConstructor().newInstance() as ExcelCreatable }
@@ -11,7 +15,14 @@ class ExcelCreatorFactory {
             excelCreatorAnnotation.name.ifBlank { creatorClass.simpleName }
         }
 
-    @kotlin.jvm.Throws(RuntimeException::class)
+    /**
+     * Gets the excel creator
+     *
+     * @param name excel creator name
+     * @return [ExcelCreatable] excel creator
+     * @throws NotFoundCreatorException
+     */
+    @kotlin.jvm.Throws(NotFoundCreatorException::class)
     fun getCreator(name: String): ExcelCreatable = this.factory[name] ?: throw NotFoundCreatorException("COULD NOT FOUND [$name] Excel Creator")
 }
 
