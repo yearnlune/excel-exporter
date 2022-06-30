@@ -5,7 +5,11 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
-
+/**
+ * Set cell value with [Any] type
+ *
+ * @param any [Any] type value
+ */
 fun SXSSFCell.setCellValue(any: Any?) {
     return when (any) {
         is Int -> this.setCellValue(any.toDouble())

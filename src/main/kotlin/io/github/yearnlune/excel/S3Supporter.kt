@@ -12,14 +12,20 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.util.*
 
-
+/**
+ * Support 'Amazon S3' to excel exporter
+ *
+ * @property s3Client amazon S3 interface
+ * @property bucket bucket name
+ * @property expiration time (in seconds) that the new pre-signed URL expires, default 600 seconds(10 min)
+ */
 class S3Supporter(
 
     private val s3Client: AmazonS3,
 
     private val bucket: String,
 
-    private var expiration: Long = 0L
+    private var expiration: Long = 600L
 ) {
 
     init {
@@ -28,10 +34,26 @@ class S3Supporter(
         }
     }
 
+    /**
+     * Set pre-signed expiration
+     *
+     * @param second
+     */
     fun withExpiration(second: Long) {
+        if (second < 0L) {
+            throw IllegalArgumentException("Negative number not supported [Expiration: $second]")
+        }
+
         this.expiration = second
     }
 
+    /**
+     * Upload the Excel and then return download url
+     *
+     * @param key s3 object key
+     * @param workbook excel
+     * @return download url
+     */
     fun uploadAndGetDownloadUrl(key: String, workbook: Workbook): String? {
         val generatedKey = "excel/$key.xlsx"
         var downloadUrl: String? = null
@@ -48,6 +70,13 @@ class S3Supporter(
         return downloadUrl
     }
 
+    /**
+     * Upload excel to S3
+     *
+     * @param key object key
+     * @param workbook excel
+     * @return result
+     */
     @kotlin.jvm.Throws(SdkClientException::class, AmazonServiceException::class)
     private fun putExcelObject(key: String, workbook: Workbook): PutObjectResult? {
         val outputStream = ByteArrayOutputStream()
@@ -61,10 +90,19 @@ class S3Supporter(
         })
     }
 
+    /**
+     * Creates pre-signed url
+     *
+     * @param key object key
+     * @return download url
+     */
     private fun getPresignedDownloadUrl(key: String): String {
         val presignedRequest = GeneratePresignedUrlRequest(bucket, key).withMethod(HttpMethod.GET)
             .withContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-            .withExpiration(Date(System.currentTimeMillis() + (expiration * 1000)))
+
+        if (expiration > 0L) {
+            presignedRequest.withExpiration(Date(System.currentTimeMillis() + (expiration * 1000)))
+        }
 
         return s3Client.generatePresignedUrl(presignedRequest).toString()
     }

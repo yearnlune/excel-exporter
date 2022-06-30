@@ -5,9 +5,26 @@ import org.apache.poi.xssf.streaming.SXSSFSheet
 import org.apache.poi.xssf.streaming.SXSSFWorkbook
 import java.util.concurrent.atomic.AtomicInteger
 
+/**
+ * Standard excel creator
+ *
+ * Example)
+ *
+ * |    header#1   |    header#2   |    header#3   |
+ * |:-------------:|:-------------:|:-------------:|
+ * | content[1][1] | content[1][2] | content[1][3] |
+ * | content[2][1] | content[2][2] | content[2][3] |
+ *
+ */
 @ExcelCreator("YEARNLUNE")
 class StandardExcelCreator : ExcelCreatable {
 
+    /**
+     * Create Excel with [ExcelMeta]
+     *
+     * @param data
+     * @return [Workbook]
+     */
     override fun createExcel(data: ExcelMeta): Workbook {
         val rowIndex = AtomicInteger()
         val workBook = SXSSFWorkbook()
@@ -20,6 +37,13 @@ class StandardExcelCreator : ExcelCreatable {
         return workBook
     }
 
+    /**
+     * Create excel headers
+     *
+     * @param sheet
+     * @param rowIndex
+     * @param headers
+     */
     private fun createHeaders(sheet: SXSSFSheet, rowIndex: AtomicInteger, headers: Array<ExcelMeta.Header>) {
         val headerRow = sheet.createRow(rowIndex.getAndIncrement())
         repeat(headers.count()) {
@@ -34,6 +58,13 @@ class StandardExcelCreator : ExcelCreatable {
         }
     }
 
+    /**
+     * Create excel contents
+     *
+     * @param sheet
+     * @param rowIndex
+     * @param contents
+     */
     private fun createContents(sheet: SXSSFSheet, rowIndex: AtomicInteger, contents: Array<ExcelMeta.Content>) {
         var isNotNullValue = false
         repeat(contents.count()) { rowCount ->

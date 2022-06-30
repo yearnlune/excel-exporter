@@ -8,7 +8,7 @@ import org.junit.jupiter.api.assertThrows
 
 class ExcelCreatorFactoryTest {
 
-    private val excelCreatorFactory: ExcelCreatorFactory = ExcelCreatorFactory()
+    private val excelCreatorFactory = ExcelCreatorFactory
 
     @Test
     @DisplayName("standard creator 가져오기")

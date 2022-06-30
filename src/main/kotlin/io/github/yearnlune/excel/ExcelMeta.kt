@@ -3,6 +3,12 @@ package io.github.yearnlune.excel
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import java.text.DateFormat
 
+/**
+ * Excel metadata that creates excel
+ *
+ * @property headers excel headers
+ * @property contents excel contents
+ */
 class ExcelMeta(
 
     val headers: Array<Header> = arrayOf(),
@@ -12,15 +18,22 @@ class ExcelMeta(
 
     companion object {
 
+        /**
+         * Creates [ExcelMeta] using data
+         *
+         * @param T
+         * @param dataList data
+         * @return excel metadata
+         */
         inline fun <reified T> create(dataList: List<T>): ExcelMeta {
             if (dataList.isEmpty()) {
                 return ExcelMeta()
             } else {
-                val objectMapper = jacksonObjectMapper()
-                    .setDateFormat(DateFormat.getDateTimeInstance())
-
+                val objectMapper = jacksonObjectMapper().setDateFormat(DateFormat.getDateTimeInstance())
                 val flattenMaps = dataList
-                    .map { objectMapper.readValue(objectMapper.writeValueAsString(it), Map::class.java).flatten() }
+                    .map {
+                        objectMapper.readValue(objectMapper.writeValueAsString(it), Map::class.java).flatten()
+                    }
 
                 val headers = flattenMaps.first().keys
                     .map {
@@ -46,6 +59,12 @@ class ExcelMeta(
         }
     }
 
+    /**
+     * Excel header metadata
+     *
+     * @property name header name
+     * @property width header width
+     */
     class Header(
 
         val name: String,
@@ -53,6 +72,11 @@ class ExcelMeta(
         val width: Int? = null,
     )
 
+    /**
+     * Excel content
+     *
+     * @property values
+     */
     class Content(
 
         val values: Array<Any?>
