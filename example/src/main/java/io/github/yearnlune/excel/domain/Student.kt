@@ -6,7 +6,7 @@ data class Student(
 
     val id: String = UUID.randomUUID().toString(),
 
-    val name: String,
+    val name: String?,
 
     val email: String,
 

@@ -18,7 +18,7 @@ class ExcelExportController(
         val students: List<Student> = listOf(
             Student(name = "A", email = "a@example.com", birth = Date()),
             Student(name = "B", email = "b@example.com", birth = Date()),
-            Student(name = "C", email = "c@example.com", birth = Date())
+            Student(name = null, email = "c@example.com", birth = Date())
         )
         return excelExporter.exportAsResponseEntity(ExcelMeta.create(students), "students")
     }

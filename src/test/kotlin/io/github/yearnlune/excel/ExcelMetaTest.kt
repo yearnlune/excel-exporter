@@ -38,7 +38,7 @@ class ExcelMetaTest {
         )
         assertThat(
             excelMeta.contents[3].values,
-            equalTo(arrayOf("9788901260716", "title#4", 32.05, 3, dateFormat.format(currentDate)))
+            equalTo(arrayOf("9788901260716", "title#4", 32.05, 3, dateFormat.format(currentDate), null, null))
         )
     }
 
@@ -70,8 +70,41 @@ class ExcelMetaTest {
             excelMeta.contents.first().values,
             equalTo(arrayOf("9738941404389", "title#1", 5.0, 3, dateFormat.format(currentDate), "author#1", "author#1@example.com"))
         )
-        assertThat(excelMeta.contents[4].values, equalTo(arrayOf(22.50, 5, dateFormat.format(currentDate))))
-        assertThat(excelMeta.contents.size, `is`(bookList.size - 2))
+        assertThat(excelMeta.contents[4].values, equalTo(arrayOf(null, null, 22.50, 5, dateFormat.format(currentDate), null, null)))
+        assertThat(excelMeta.contents.size, `is`(bookList.size))
+    }
+
+    @Test
+    @DisplayName("맵 리스트로 meta 생성하기")
+    fun create_withMap() {
+        val bookList = listOf<Map<String, Any>>(
+            mapOf(
+                "isbn" to "9783161484100",
+                "title" to "title#1"
+            ),
+            mapOf(
+                "price" to 2.99,
+                "revision" to 3
+            )
+        )
+
+        /* WHEN */
+        val excelMeta = ExcelMeta.create(bookList)
+
+        /* THEN */
+        assertThat(
+            excelMeta.headers.map { it.name }.toTypedArray(),
+            equalTo(arrayOf("isbn", "title", "price", "revision"))
+        )
+        assertThat(
+            excelMeta.contents.first().values,
+            equalTo(arrayOf("9783161484100", "title#1", null, null))
+        )
+
+        assertThat(
+            excelMeta.contents[1].values,
+            equalTo(arrayOf(null, null, 2.99, 3))
+        )
     }
 
     data class Book(

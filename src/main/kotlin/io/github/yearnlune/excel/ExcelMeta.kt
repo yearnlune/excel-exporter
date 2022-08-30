@@ -21,29 +21,29 @@ class ExcelMeta(
         /**
          * Creates [ExcelMeta] using data
          *
-         * @param T
          * @param dataList data
          * @return excel metadata
          */
-        inline fun <reified T> create(dataList: List<T>): ExcelMeta {
+        fun create(dataList: List<*>): ExcelMeta {
             if (dataList.isEmpty()) {
                 return ExcelMeta()
             } else {
                 val objectMapper = jacksonObjectMapper().setDateFormat(DateFormat.getDateTimeInstance())
                 val flattenMaps = dataList
                     .map {
-                        objectMapper.readValue(objectMapper.writeValueAsString(it), Map::class.java).flatten()
+                        objectMapper.convertValue(it, Map::class.java).filter { field -> field.value != null }.flatten()
                     }
 
-                val headers = flattenMaps.first().keys
-                    .map {
-                        Header(it as String)
+                val headers = mutableSetOf<Header>()
+                flattenMaps.forEach { data ->
+                    data.keys.map {
+                        headers.add(Header(it as String))
                     }
-                    .toTypedArray()
+                }
+
                 val contents = flattenMaps
                     .map {
                         headers
-                            .filter { header -> it[header.name] != null }
                             .map { header -> it[header.name] }
                             .toTypedArray()
                             .let { Content(it) }
@@ -52,7 +52,7 @@ class ExcelMeta(
                     .toTypedArray()
 
                 return ExcelMeta(
-                    headers = headers,
+                    headers = headers.toTypedArray(),
                     contents = contents
                 )
             }
@@ -65,7 +65,7 @@ class ExcelMeta(
      * @property name header name
      * @property width header width
      */
-    class Header(
+    data class Header(
 
         val name: String,
 
