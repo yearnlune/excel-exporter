@@ -5,6 +5,7 @@ import com.amazonaws.auth.AnonymousAWSCredentials
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
+import com.amazonaws.services.s3.model.Bucket
 import io.findify.s3mock.S3Mock
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
@@ -38,5 +39,10 @@ open class S3Config(
 
     private fun s3Endpoint(): EndpointConfiguration {
         return EndpointConfiguration("http://${appProperties.host}:${appProperties.port}", "us-west-1")
+    }
+
+    @Bean
+    open fun createBucket(s3: AmazonS3): Bucket {
+        return s3.createBucket(appProperties.bucket)
     }
 }

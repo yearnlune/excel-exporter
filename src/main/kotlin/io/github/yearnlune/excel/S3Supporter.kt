@@ -28,12 +28,6 @@ class S3Supporter(
     private var expiration: Long = 600L
 ) {
 
-    init {
-        if (!s3Client.doesBucketExistV2(bucket)) {
-            s3Client.createBucket(bucket)
-        }
-    }
-
     /**
      * Set pre-signed expiration
      *
