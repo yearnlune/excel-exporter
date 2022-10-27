@@ -22,9 +22,10 @@ class ExcelMeta(
          * Creates [ExcelMeta] using data
          *
          * @param dataList data
+         * @param predefinedHeaders predefined headers
          * @return excel metadata
          */
-        fun create(dataList: List<*>): ExcelMeta {
+        fun create(dataList: List<*>, predefinedHeaders: Set<String> = emptySet()): ExcelMeta {
             if (dataList.isEmpty()) {
                 return ExcelMeta()
             } else {
@@ -34,10 +35,10 @@ class ExcelMeta(
                         objectMapper.convertValue(it, Map::class.java).filter { field -> field.value != null }.flatten()
                     }
 
-                val headers = mutableSetOf<Header>()
-                flattenMaps.forEach { data ->
-                    data.keys.map {
-                        headers.add(Header(it as String))
+                val headers = predefinedHeaders.map { Header(it) }.toMutableSet()
+                if (predefinedHeaders.isEmpty()) {
+                    flattenMaps.forEach { data ->
+                        data.keys.map { headers.add(Header(it as String)) }
                     }
                 }
 
