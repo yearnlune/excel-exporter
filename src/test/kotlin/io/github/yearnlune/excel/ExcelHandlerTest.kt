@@ -133,7 +133,7 @@ class ExcelHandlerTest {
     @DisplayName("boolean 타입 값 넣기")
     fun setCellValue_withBoolean() {
         /* GIVEN */
-        val booleanType: Any = false
+        val booleanType: Any = true
 
         /* WHEN */
         this.cell.setCellValue(booleanType)

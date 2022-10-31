@@ -16,6 +16,7 @@ fun SXSSFCell.setCellValue(any: Any?) {
         is Long -> this.setCellValue(any.toDouble())
         is Float -> this.setCellValue(any.toDouble())
         is Double -> this.setCellValue(any)
+        is Boolean -> this.setCellValue(any)
         is Date -> this.setCellValue(any)
         is LocalDate -> this.setCellValue(any)
         is LocalDateTime -> this.setCellValue(any)
