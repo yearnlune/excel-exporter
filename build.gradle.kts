@@ -11,7 +11,7 @@ plugins {
 
 allprojects {
     group = "io.github.yearnlune.excel"
-    version = "1.0.7"
+    version = "1.0.8"
 
     repositories {
         mavenCentral()
@@ -28,6 +28,7 @@ dependencies {
     implementation("io.github.classgraph:classgraph:4.8.147")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.0")
     implementation("org.springframework.boot:spring-boot-autoconfigure:2.7.0")
     implementation("org.springframework:spring-web:5.3.20")
     implementation("com.amazonaws:aws-java-sdk-s3:1.12.241")

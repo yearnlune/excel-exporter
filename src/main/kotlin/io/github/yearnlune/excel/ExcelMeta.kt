@@ -1,5 +1,7 @@
 package io.github.yearnlune.excel
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import java.text.DateFormat
 
@@ -13,7 +15,9 @@ class ExcelMeta(
 
     val headers: Array<Header> = arrayOf(),
 
-    val contents: Array<Content> = arrayOf()
+    val contents: Array<Content> = arrayOf(),
+
+    val metadata: Map<String, Any> = mutableMapOf()
 ) {
 
     companion object {
@@ -25,14 +29,18 @@ class ExcelMeta(
          * @param predefinedHeaders predefined headers
          * @return excel metadata
          */
-        fun create(dataList: List<*>, predefinedHeaders: Set<String> = emptySet()): ExcelMeta {
+        fun create(dataList: List<*>, predefinedHeaders: Set<String> = emptySet(), metadata: Map<String, Any> = mutableMapOf()): ExcelMeta {
             if (dataList.isEmpty()) {
                 return ExcelMeta()
             } else {
-                val objectMapper = jacksonObjectMapper().setDateFormat(DateFormat.getDateTimeInstance())
+                val objectMapper = jacksonObjectMapper()
+                    .registerModule(JavaTimeModule())
+                    .setDateFormat(DateFormat.getDateTimeInstance())
                 val flattenMaps = dataList
                     .map {
-                        objectMapper.convertValue(it, Map::class.java).filter { field -> field.value != null }.flatten()
+                        objectMapper.convertValue(it, object: TypeReference<Map<String, Any?>>() {})
+                            .filter { field -> field.value != null }
+                            .flatten()
                     }
 
                 val headers = predefinedHeaders.map { Header(it) }.toMutableSet()
@@ -54,7 +62,8 @@ class ExcelMeta(
 
                 return ExcelMeta(
                     headers = headers.toTypedArray(),
-                    contents = contents
+                    contents = contents,
+                    metadata = metadata
                 )
             }
         }

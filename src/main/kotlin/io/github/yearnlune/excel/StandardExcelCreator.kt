@@ -1,6 +1,7 @@
 package io.github.yearnlune.excel
 
-import org.apache.poi.ss.usermodel.Workbook
+import org.apache.poi.ss.usermodel.*
+import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.xssf.streaming.SXSSFSheet
 import org.apache.poi.xssf.streaming.SXSSFWorkbook
 import java.util.concurrent.atomic.AtomicInteger
@@ -31,8 +32,10 @@ class StandardExcelCreator : ExcelCreatable {
         val sheet: SXSSFSheet = workBook.createSheet()
         sheet.trackAllColumnsForAutoSizing()
 
-        createHeaders(sheet, rowIndex, data.headers)
-        createContents(sheet, rowIndex, data.contents)
+        createFilter(sheet, rowIndex, data.headers.size, data.contents.size)
+        createHeaders(workBook, sheet, rowIndex, data.headers)
+        createContents(workBook, sheet, rowIndex, data.contents)
+        adjustWidth(sheet, data.headers)
 
         return workBook
     }
@@ -44,18 +47,36 @@ class StandardExcelCreator : ExcelCreatable {
      * @param rowIndex
      * @param headers
      */
-    private fun createHeaders(sheet: SXSSFSheet, rowIndex: AtomicInteger, headers: Array<ExcelMeta.Header>) {
+    private fun createHeaders(workBook: Workbook, sheet: SXSSFSheet, rowIndex: AtomicInteger, headers: Array<ExcelMeta.Header>) {
         val headerRow = sheet.createRow(rowIndex.getAndIncrement())
         repeat(headers.count()) {
-            if (headers[it].width == null) {
-                sheet.autoSizeColumn(it)
-            } else {
-                sheet.setColumnWidth(it, headers[it].width!!)
-            }
-
             val headerCell = headerRow.createCell(it)
             headerCell.setCellValue(headers[it].name)
+            headerCell.cellStyle = workBook.createCellStyle().apply {
+                this.alignment = HorizontalAlignment.CENTER
+                this.verticalAlignment = VerticalAlignment.CENTER
+                this.fillForegroundColor = IndexedColors.GREY_40_PERCENT.getIndex()
+                this.fillPattern = FillPatternType.SOLID_FOREGROUND
+                this.borderBottom = BorderStyle.MEDIUM
+                this.borderTop = BorderStyle.MEDIUM
+                this.borderLeft = BorderStyle.MEDIUM
+                this.borderRight = BorderStyle.MEDIUM
+                this.setFont(
+                    workBook.createFont().apply {
+                        this.bold = true
+                    }
+                )
+            }
         }
+    }
+
+    private fun createFilter(
+        sheet: SXSSFSheet,
+        rowIndex: AtomicInteger,
+        headerLength: Int,
+        quantity: Int
+    ) {
+        sheet.setAutoFilter(CellRangeAddress(rowIndex.get(), rowIndex.get() + quantity, 0, headerLength - 1))
     }
 
     /**
@@ -65,7 +86,7 @@ class StandardExcelCreator : ExcelCreatable {
      * @param rowIndex
      * @param contents
      */
-    private fun createContents(sheet: SXSSFSheet, rowIndex: AtomicInteger, contents: Array<ExcelMeta.Content>) {
+    private fun createContents(workBook: Workbook, sheet: SXSSFSheet, rowIndex: AtomicInteger, contents: Array<ExcelMeta.Content>) {
         var isNotNullValue = false
         repeat(contents.count()) { rowCount ->
             val contentRow = sheet.createRow(rowIndex.get())
@@ -76,11 +97,31 @@ class StandardExcelCreator : ExcelCreatable {
                         contentCell.setCellValue(value)
                         isNotNullValue = true
                     }
+                contentCell.cellStyle = workBook.createCellStyle().apply {
+                    this.borderBottom = BorderStyle.THIN
+                    this.borderTop = BorderStyle.THIN
+                    this.borderLeft = BorderStyle.THIN
+                    this.borderRight = BorderStyle.THIN
+                }
             }
 
             if (isNotNullValue) {
                 rowIndex.incrementAndGet()
                 isNotNullValue = false
+            }
+        }
+    }
+
+    private fun adjustWidth(sheet: SXSSFSheet, headers: Array<ExcelMeta.Header>) {
+        repeat(headers.count()) {
+            if (headers[it].width == null) {
+                sheet.autoSizeColumn(it)
+            } else {
+                sheet.setColumnWidth(it, headers[it].width!!)
+            }
+
+            if (sheet.getColumnWidth(it) < 10 * 256) {
+                sheet.setColumnWidth(it, 10 * 256)
             }
         }
     }

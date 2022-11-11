@@ -5,8 +5,7 @@ import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import java.text.SimpleDateFormat
-import java.util.*
+import java.time.LocalDateTime
 
 class ExcelMetaTest {
 
@@ -14,8 +13,7 @@ class ExcelMetaTest {
     @DisplayName("객체 리스트로 meta 생성하기")
     fun create() {
         /* GIVEN */
-        val currentDate = Date()
-        val dateFormat = SimpleDateFormat.getDateTimeInstance()
+        val currentDate = LocalDateTime.of(2022, 11, 11, 12, 0)
         val bookList = listOf(
             Book("9738941404389", "title#1", 5.00, 3, currentDate, Author("author#1", "author#1@example.com")),
             Book("9783161484100", "title#2", 12.99, 1, currentDate, Author("author#2", "author#2@example.com")),
@@ -25,7 +23,7 @@ class ExcelMetaTest {
         )
 
         /* WHEN */
-        val excelMeta = ExcelMeta.create(bookList)
+        val excelMeta = ExcelMeta.create(bookList, setOf("isbn", "title", "price", "revision", "publishDate", "author.name", "author.email"))
 
         /* THEN */
         assertThat(
@@ -34,11 +32,11 @@ class ExcelMetaTest {
         )
         assertThat(
             excelMeta.contents[0].values,
-            equalTo(arrayOf("9738941404389", "title#1", 5.0, 3, dateFormat.format(currentDate), "author#1", "author#1@example.com"))
+            equalTo(arrayOf("9738941404389", "title#1", 5.0, 3, "2022-11-11T12:00:00", "author#1", "author#1@example.com"))
         )
         assertThat(
             excelMeta.contents[3].values,
-            equalTo(arrayOf("9788901260716", "title#4", 32.05, 3, dateFormat.format(currentDate), null, null))
+            equalTo(arrayOf("9788901260716", "title#4", 32.05, 3, "2022-11-11T12:00:00", null, null))
         )
     }
 
@@ -46,8 +44,7 @@ class ExcelMetaTest {
     @DisplayName("객체 리스트로 meta 생성하기 - null value 처리")
     fun create_withNull() {
         /* GIVEN */
-        val currentDate = Date()
-        val dateFormat = SimpleDateFormat.getDateTimeInstance()
+        val currentDate = LocalDateTime.of(2022, 11, 11, 12, 0)
         val bookList = listOf(
             Book("9738941404389", "title#1", 5.00, 3, currentDate, Author("author#1", "author#1@example.com")),
             Book("9783161484100", "title#2", 12.99, 1, currentDate, Author("author#2", "author#2@example.com")),
@@ -59,7 +56,7 @@ class ExcelMetaTest {
         )
 
         /* WHEN */
-        val excelMeta = ExcelMeta.create(bookList)
+        val excelMeta = ExcelMeta.create(bookList, setOf("isbn", "title", "price", "revision", "publishDate", "author.name", "author.email"))
 
         /* THEN */
         assertThat(
@@ -68,9 +65,9 @@ class ExcelMetaTest {
         )
         assertThat(
             excelMeta.contents.first().values,
-            equalTo(arrayOf("9738941404389", "title#1", 5.0, 3, dateFormat.format(currentDate), "author#1", "author#1@example.com"))
+            equalTo(arrayOf("9738941404389", "title#1", 5.0, 3, "2022-11-11T12:00:00", "author#1", "author#1@example.com"))
         )
-        assertThat(excelMeta.contents[4].values, equalTo(arrayOf(null, null, 22.50, 5, dateFormat.format(currentDate), null, null)))
+        assertThat(excelMeta.contents[4].values, equalTo(arrayOf(null, null, 22.50, 5, "2022-11-11T12:00:00", null, null)))
         assertThat(excelMeta.contents.size, `is`(bookList.size))
     }
 
@@ -117,7 +114,7 @@ class ExcelMetaTest {
 
         val revision: Int?,
 
-        val publishDate: Date?,
+        val publishDate: LocalDateTime?,
 
         val author: Author? = null
     )
