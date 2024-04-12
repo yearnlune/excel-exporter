@@ -30,8 +30,10 @@ class ExcelMeta(
          * @return excel metadata
          */
         fun create(dataList: List<*>, predefinedHeaders: Set<String> = emptySet(), metadata: Map<String, Any> = mutableMapOf()): ExcelMeta {
+            val headers = predefinedHeaders.map { Header(it) }.toMutableSet()
+
             if (dataList.isEmpty()) {
-                return ExcelMeta()
+                return ExcelMeta(headers = headers.toTypedArray())
             } else {
                 val objectMapper = jacksonObjectMapper()
                     .registerModule(JavaTimeModule())
@@ -43,7 +45,6 @@ class ExcelMeta(
                             .flatten()
                     }
 
-                val headers = predefinedHeaders.map { Header(it) }.toMutableSet()
                 if (predefinedHeaders.isEmpty()) {
                     flattenMaps.forEach { data ->
                         data.keys.map { headers.add(Header(it as String)) }

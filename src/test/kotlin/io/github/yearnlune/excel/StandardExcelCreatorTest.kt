@@ -87,4 +87,28 @@ class StandardExcelCreatorTest {
             sheet.getRow(2).getCell(2).dateCellValue.time, `is`((request.contents[2].values[2] as Date).time)
         )
     }
+
+    @Test
+    @DisplayName("standard excel 만들기 - empty contents 처리")
+    fun createExcel_emptyContents() {
+        /* GIVEN */
+        val request = ExcelMeta(
+            headers = arrayOf(
+                ExcelMeta.Header("아이디"),
+                ExcelMeta.Header("나이"),
+                ExcelMeta.Header("가입일")
+            ),
+            contents = arrayOf()
+        )
+
+        /* WHEN */
+        val workbook = standardExcelCreator.createExcel(request)
+
+        val sheet = workbook.getSheetAt(0)
+
+        /* THEN */
+        assertThat(sheet.getRow(0).getCell(0).stringCellValue, `is`(request.headers[0].name))
+        assertThat(sheet.getRow(0).getCell(1).stringCellValue, `is`(request.headers[1].name))
+        assertThat(sheet.getRow(0).getCell(2).stringCellValue, `is`(request.headers[2].name))
+    }
 }

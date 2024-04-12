@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 class ExcelMetaTest {
 
     @Test
-    @DisplayName("객체 리스트로 meta 생성하기")
+    @DisplayName("meta 생성하기 - 객체 리스트")
     fun create() {
         /* GIVEN */
         val currentDate = LocalDateTime.of(2022, 11, 11, 12, 0)
@@ -41,7 +41,7 @@ class ExcelMetaTest {
     }
 
     @Test
-    @DisplayName("객체 리스트로 meta 생성하기 - null value 처리")
+    @DisplayName("meta 생성하기 - 객체 리스트 & null value 처리")
     fun create_withNull() {
         /* GIVEN */
         val currentDate = LocalDateTime.of(2022, 11, 11, 12, 0)
@@ -72,7 +72,7 @@ class ExcelMetaTest {
     }
 
     @Test
-    @DisplayName("맵 리스트로 meta 생성하기")
+    @DisplayName("meta 생성하기 - 맵 리스트")
     fun create_withMap() {
         val bookList = listOf<Map<String, Any>>(
             mapOf(
@@ -101,6 +101,20 @@ class ExcelMetaTest {
         assertThat(
             excelMeta.contents[1].values,
             equalTo(arrayOf(null, null, 2.99, 3))
+        )
+    }
+
+    @Test
+    @DisplayName("meta 생성하기 - 빈 데이터 처리")
+    fun create_withEmptyContents() {
+        /* GIVEN */
+        val bookList = listOf<Map<String, Any>>()
+
+        /* WHEN */
+        val excelMeta = ExcelMeta.create(bookList, setOf("isbn", "title", "price", "revision"))
+        assertThat(
+            excelMeta.headers.map { it.name }.toTypedArray(),
+            equalTo(arrayOf("isbn", "title", "price", "revision"))
         )
     }
 
