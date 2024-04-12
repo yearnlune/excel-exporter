@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm") version "1.6.20"
 
@@ -11,14 +9,14 @@ plugins {
 
 allprojects {
     group = "io.github.yearnlune.excel"
-    version = "1.0.8"
+    version = "1.0.10"
 
     repositories {
         mavenCentral()
         maven { url = uri("https://repo.spring.io/milestone") }
     }
 
-    tasks.withType<KotlinCompile> {
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
     }
 }
